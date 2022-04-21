@@ -7,8 +7,15 @@
  */
 package com.bidsdk.model;
 
+import com.google.gson.Gson;
+
 public class BIDOtpVerifyResult {
     public int error_code;
     public String message;
     public boolean status;
+    
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
 }
