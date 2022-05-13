@@ -103,9 +103,7 @@ public class BIDOTP {
             String responseStr = (String) response.get("response");
             int statusCode = (Integer) response.get("status");
 
-            if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_ACCEPTED) {
-                ret = new Gson().fromJson(responseStr, BIDOtpVerifyResult.class);
-            }
+            ret = new Gson().fromJson(responseStr, BIDOtpVerifyResult.class);
         }
         catch (Exception e) {
             e.printStackTrace();
