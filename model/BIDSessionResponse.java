@@ -9,6 +9,8 @@ package com.bidsdk.model;
 
 import java.util.Map;
 
+import com.google.gson.Gson;
+
 public class BIDSessionResponse {
     public String sessionId;
     public String data;
@@ -21,4 +23,9 @@ public class BIDSessionResponse {
     public String message;
     public Map<String, Object> user_data;
     public BIDPoNData account_data;
+    
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
 }
