@@ -11,6 +11,7 @@ import com.bidsdk.model.BIDCommunityInfo;
 import com.bidsdk.model.BIDKeyPair;
 import com.bidsdk.model.BIDPoNData;
 import com.bidsdk.model.BIDSD;
+import com.bidsdk.model.BIDTenantInfo;
 import com.bidsdk.utils.WTM;
 import com.google.gson.Gson;
 

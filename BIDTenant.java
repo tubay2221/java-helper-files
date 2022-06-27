@@ -61,14 +61,9 @@ public class BIDTenant {
         cache_key = cache_key + "_" + tenantInfo.communityName;
       }
 
-      System.out.println("communityCache_:::" + cache_key);
-
       String cache_str = InMemCache.getInstance().get(cache_key);
 
-      System.out.println("body:::::" + body);
-
       if (cache_str != null) {
-        System.out.println("getting data from cache:::");
         communityInfo = new Gson().fromJson(cache_str, BIDCommunityInfo.class);
         return communityInfo;
       }
@@ -87,16 +82,9 @@ public class BIDTenant {
 
       if (statusCode == HttpStatus.SC_OK) {
         InMemCache.getInstance().set(cache_key, responseStr);
-        communityInfo =
-          new Gson().fromJson(responseStr, BIDCommunityInfo.class);
-        System.out.println("communityInfo::::" + communityInfo);
+        communityInfo = new Gson().fromJson(responseStr, BIDCommunityInfo.class);
       } else {
-        throw new Exception(
-          "Unable to load communityInfo code" +
-          statusCode +
-          " with message: " +
-          responseStr
-        );
+        throw new Exception("Unable to load communityInfo code" + statusCode + " with message: " + responseStr);
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -117,19 +105,13 @@ public class BIDTenant {
       if (tenantInfo.communityId != null) {
         cache_key = cache_key + "_" + tenantInfo.communityId;
       } else {
-        cache_key =
-          (tenantInfo.communityName != null)
-            ? cache_key + "_" + tenantInfo.communityName
-            : cache_key;
+        cache_key = (tenantInfo.communityName != null) ? cache_key + "_" + tenantInfo.communityName : cache_key;
       }
 
       String sdUrl = "https://" + tenantInfo.dns + "/caas/sd";
 
-      System.out.println("cache_key:::" + cache_key);
-
       String cache_str = InMemCache.getInstance().get(cache_key);
       if (cache_str != null) {
-        System.out.println("getting data from cache:::");
         sd = new Gson().fromJson(cache_str, BIDSD.class);
         return sd;
       }
@@ -147,7 +129,6 @@ public class BIDTenant {
       if (statusCode == HttpStatus.SC_OK) {
         sd = new Gson().fromJson(responseStr, BIDSD.class);
         InMemCache.getInstance().set(cache_key, responseStr);
-        System.out.println("sd::::" + sd);
       } else {
         throw new Exception(
           "Unable to load sd code" +
