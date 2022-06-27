@@ -6,6 +6,7 @@
 
 _(*ability* to add as gradle dependency will be added soon)_
 
+
 - add to build.gradle
 ```
 ext {
@@ -23,6 +24,7 @@ dependencies {
 }
 
 ```
+- OR you can directly import these JARs to your project (https://github.com/1Kosmos/java-helper-dependencies/releases/tag/v1.0.0)
 
 - Know your tenant (BIDTenant) `dns` and `communityName`
 - Initialize SDK
