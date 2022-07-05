@@ -7,6 +7,7 @@
  */
 package com.bidsdk;
 
+import com.bidsdk.BIDTenant;
 import com.bidsdk.model.BIDAttestationOptionsResponse;
 import com.bidsdk.model.BIDAttestationOptionsValue;
 import com.bidsdk.model.BIDAttestationResultData;
@@ -15,7 +16,7 @@ import com.bidsdk.model.BIDAttestationResultValue;
 import com.bidsdk.model.BIDCommunityInfo;
 import com.bidsdk.model.BIDKeyPair;
 import com.bidsdk.model.BIDSD;
-import com.bidsdk.model.BIDSessionResponse;
+import com.bidsdk.model.BIDTenantInfo;
 import com.bidsdk.utils.InMemCache;
 import com.bidsdk.utils.WTM;
 import com.google.gson.Gson;
@@ -24,10 +25,10 @@ import java.util.Map;
 
 public class BIDWebAuthn {
 
-  private static String getPublicKey() {
+  private static String getPublicKey(BIDTenantInfo tenantInfo) {
     String ret = null;
     try {
-      BIDSD sd = BIDSDK.getInstance().getSD();
+      BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
       String url = sd.webauthn + "/publickeys";
 
       String cache_key = url;
@@ -60,16 +61,16 @@ public class BIDWebAuthn {
   }
 
   public static BIDAttestationOptionsResponse fetchAttestationOptions(
-    BIDAttestationOptionsValue attestationOptionsRequest
+    BIDTenantInfo tenantInfo, BIDAttestationOptionsValue attestationOptionsRequest
   ) {
     BIDAttestationOptionsResponse ret = null;
     try {
-      BIDCommunityInfo communityInfo = BIDSDK.getInstance().getCommunityInfo();
-      BIDKeyPair keySet = BIDSDK.getInstance().getKeySet();
-      String licenseKey = BIDSDK.getInstance().getLicenseKey();
-      BIDSD sd = BIDSDK.getInstance().getSD();
+      BIDCommunityInfo communityInfo = BIDTenant.getInstance().getCommunityInfo(tenantInfo);
+      BIDKeyPair keySet = BIDTenant.getInstance().getKeySet();
+      String licenseKey = tenantInfo.licenseKey;
+      BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
+      String webAuthnPublicKey = getPublicKey(tenantInfo);
 
-      String webAuthnPublicKey = getPublicKey();
 
       String sharedKey = BIDECDSA.createSharedKey(
         keySet.privateKey,
@@ -115,15 +116,15 @@ public class BIDWebAuthn {
     return ret;
   }
 
-  public static BIDAttestationResultData submitAttestationResult(BIDAttestationResultValue attestationResultRequest) {
+  public static BIDAttestationResultData submitAttestationResult(BIDTenantInfo tenantInfo, BIDAttestationResultValue attestationResultRequest) {
     BIDAttestationResultData ret = null;
     try {
-      BIDCommunityInfo communityInfo = BIDSDK.getInstance().getCommunityInfo();
-      BIDKeyPair keySet = BIDSDK.getInstance().getKeySet();
-      String licenseKey = BIDSDK.getInstance().getLicenseKey();
-      BIDSD sd = BIDSDK.getInstance().getSD();
+      BIDCommunityInfo communityInfo = BIDTenant.getInstance().getCommunityInfo(tenantInfo);
+      BIDKeyPair keySet = BIDTenant.getInstance().getKeySet();
+      String licenseKey = tenantInfo.licenseKey;
+      BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
 
-      String webAuthnPublicKey = getPublicKey();
+      String webAuthnPublicKey = getPublicKey(tenantInfo);
 
       String sharedKey = BIDECDSA.createSharedKey(keySet.privateKey, webAuthnPublicKey);
 

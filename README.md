@@ -25,27 +25,23 @@ dependencies {
 ```
 
 - Know your tenant (BIDTenant) `dns` and `communityName`
-- Initialize SDK
-```
-BIDSDK.getInstance().setupTenant(<your tenant>, "<your license key>");
-```
 
 - Request OTP
 ```
-BIDOtpResponse otpResponse = BIDOTP.requestOTP("<username>", "<emailTo>", "<smsTo>", "1");
+BIDOtpResponse otpResponse = BIDOTP.requestOTP({ "dns": "<dns>", "communityName": "<communityName>", "licenseKey": "<licenseKey>" },"<username>", "<emailTo>", "<smsTo>", "1");
 ```
 
 - Verify OTP
 ```
-BIDOtpVerifyResult result = BIDOTP.verifyOTP("<username>", "<otpcode>");
+BIDOtpVerifyResult result = BIDOTP.verifyOTP({ "dns": "<dns>", "communityName": "<communityName>", "licenseKey": "<licenseKey>" }, "<username>", "<otpcode>");
 ```
 
 - Create new UWL2.0 session
 ```
-BIDSession session = BIDSessions.createNewSession(null, null);
+BIDSession session = BIDSessions.createNewSession({ "dns": "<dns>", "communityName": "<communityName>", "licenseKey": "<licenseKey>" }, null, null);
 ```
 
 - Poll for UWL2.0 session response
 ```
-BIDSessionResponse response = BIDSessions.pollSession("<sessionId>", true, true);
+BIDSessionResponse response = BIDSessions.pollSession({ "dns": "<dns>", "communityName": "<communityName>", "licenseKey": "<licenseKey>" }, "<sessionId>", true, true);
 ```

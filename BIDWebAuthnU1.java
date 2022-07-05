@@ -15,8 +15,7 @@ import com.bidsdk.model.BIDAttestationResultValue;
 import com.bidsdk.model.BIDCommunityInfo;
 import com.bidsdk.model.BIDKeyPair;
 import com.bidsdk.model.BIDSD;
-import com.bidsdk.model.BIDSessionResponse;
-import com.bidsdk.utils.InMemCache;
+import com.bidsdk.model.BIDTenantInfo;
 import com.bidsdk.utils.WTM;
 import com.google.gson.Gson;
 import java.util.HashMap;
@@ -25,14 +24,14 @@ import java.util.Map;
 public class BIDWebAuthnU1 {
 
   public static BIDAttestationOptionsResponse fetchAttestationOptions(
-    BIDAttestationOptionsValue attestationOptionsRequest
+    BIDTenantInfo tenantInfo,BIDAttestationOptionsValue attestationOptionsRequest
   ) {
     BIDAttestationOptionsResponse ret = null;
     try {
-      BIDCommunityInfo communityInfo = BIDSDK.getInstance().getCommunityInfo();
-      BIDKeyPair keySet = BIDSDK.getInstance().getKeySet();
-      String licenseKey = BIDSDK.getInstance().getLicenseKey();
-      BIDSD sd = BIDSDK.getInstance().getSD();
+      BIDCommunityInfo communityInfo = BIDTenant.getInstance().getCommunityInfo(tenantInfo);
+      BIDKeyPair keySet = BIDTenant.getInstance().getKeySet();
+      String licenseKey = tenantInfo.licenseKey;
+      BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
 
       Map<String, String> headers = WTM.defaultHeaders();
       headers.put("licensekey", licenseKey);
@@ -64,13 +63,13 @@ public class BIDWebAuthnU1 {
     return ret;
   }
 
-  public static BIDAttestationResultData submitAttestationResult(BIDAttestationResultValue attestationResultRequest) {
+  public static BIDAttestationResultData submitAttestationResult(BIDTenantInfo tenantInfo, BIDAttestationResultValue attestationResultRequest) {
     BIDAttestationResultData ret = null;
     try {
-      BIDCommunityInfo communityInfo = BIDSDK.getInstance().getCommunityInfo();
-      BIDKeyPair keySet = BIDSDK.getInstance().getKeySet();
-      String licenseKey = BIDSDK.getInstance().getLicenseKey();
-      BIDSD sd = BIDSDK.getInstance().getSD();
+      BIDCommunityInfo communityInfo = BIDTenant.getInstance().getCommunityInfo(tenantInfo);
+      BIDKeyPair keySet = BIDTenant.getInstance().getKeySet();
+      String licenseKey = tenantInfo.licenseKey;
+      BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
 
       Map<String, String> headers = WTM.defaultHeaders();
       headers.put("licensekey", licenseKey);

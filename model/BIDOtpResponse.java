@@ -7,10 +7,17 @@
  */
 package com.bidsdk.model;
 
+import com.google.gson.Gson;
+
 public class BIDOtpResponse {
     public String data;
     public String messageId;
     public String info;
 
     public BIDOtpValue response;
+    
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
 }

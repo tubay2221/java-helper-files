@@ -9,12 +9,21 @@ package com.bidsdk.model;
 
 import com.google.gson.Gson;
 
-public class BIDSession {
-    public String sessionId;
-    public String url;
-    
+public class BIDTenantInfo {
+    public String dns;
+    public String communityName;
+    public String licenseKey;
+
+    public String id;
+    public String tenanttype;
+    public String tenanttag;
+    public String name;
+    public String tenantId;
+    public String communityId;
+
     @Override
     public String toString() {
         return new Gson().toJson(this);
     }
+
 }
