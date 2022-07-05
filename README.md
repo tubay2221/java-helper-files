@@ -30,7 +30,7 @@ dependencies {
 ```
 BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
-BIDOtpResponse otpResponse = BIDOTP.requestOTP(tenantInfo, "<username>", "<emailTo>", "<smsTo>", "1");
+BIDOtpResponse otpResponse = BIDOTP.requestOTP(tenantInfo, "<username>", "<emailTo>", "<smsTo>", "<ISDCode>");
 ```
 
 - Verify OTP
