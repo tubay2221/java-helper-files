@@ -28,45 +28,28 @@ dependencies {
 
 - Request OTP
 ```
-BIDTenantInfo tenantInfo = new BIDTenantInfo();
-		 
-tenantInfo.dns = "<dns>";
-tenantInfo.communityName = "<communityName>";
-tenantInfo.licenseKey = "<licenseKey>";
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDOtpResponse otpResponse = BIDOTP.requestOTP(tenantInfo, "<username>", "<emailTo>", "<smsTo>", "1");
 ```
 
 - Verify OTP
 ```
-BIDTenantInfo tenantInfo = new BIDTenantInfo();
-		 
-tenantInfo.dns = "<dns>";
-tenantInfo.communityName = "<communityName>";
-tenantInfo.licenseKey = "<licenseKey>";
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDOtpVerifyResult result = BIDOTP.verifyOTP(tenantInfo, "<username>", "<otpcode>");
 ```
 
 - Create new UWL2.0 session
 ```
-BIDTenantInfo tenantInfo = new BIDTenantInfo();
-		 
-tenantInfo.dns = "<dns>";
-tenantInfo.communityName = "<communityName>";
-tenantInfo.licenseKey = "<licenseKey>";
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDSession session = BIDSessions.createNewSession(tenantInfo, null, null);
 ```
 
 - Poll for UWL2.0 session response
 ```
-BIDTenantInfo tenantInfo = new BIDTenantInfo();
-		 
-tenantInfo.dns = "<dns>";
-tenantInfo.communityName = "<communityName>";
-tenantInfo.licenseKey = "<licenseKey>";
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDSessionResponse response = BIDSessions.pollSession(tenantInfo, "<sessionId>", true, true);
 ```
-
