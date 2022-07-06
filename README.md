@@ -28,44 +28,85 @@ dependencies {
 
 - Request OTP
 ```
-BIDTenantInfo tenantInfo = new BIDTenantInfo();
-		 
-tenantInfo.dns = "<dns>";
-tenantInfo.communityName = "<communityName>";
-tenantInfo.licenseKey = "<licenseKey>";
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
-BIDOtpResponse otpResponse = BIDOTP.requestOTP(tenantInfo, "<username>", "<emailTo>", "<smsTo>", "1");
+BIDOtpResponse otpResponse = BIDOTP.requestOTP(tenantInfo, "<username>", "<emailTo>", "<smsTo>", "<ISDCode>");
 ```
 
 - Verify OTP
 ```
-BIDTenantInfo tenantInfo = new BIDTenantInfo();
-		 
-tenantInfo.dns = "<dns>";
-tenantInfo.communityName = "<communityName>";
-tenantInfo.licenseKey = "<licenseKey>";
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDOtpVerifyResult result = BIDOTP.verifyOTP(tenantInfo, "<username>", "<otpcode>");
 ```
 
 - Create new UWL2.0 session
 ```
-BIDTenantInfo tenantInfo = new BIDTenantInfo();
-		 
-tenantInfo.dns = "<dns>";
-tenantInfo.communityName = "<communityName>";
-tenantInfo.licenseKey = "<licenseKey>";
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDSession session = BIDSessions.createNewSession(tenantInfo, null, null);
 ```
 
 - Poll for UWL2.0 session response
 ```
-BIDTenantInfo tenantInfo = new BIDTenantInfo();
-		 
-tenantInfo.dns = "<dns>";
-tenantInfo.communityName = "<communityName>";
-tenantInfo.licenseKey = "<licenseKey>";
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDSessionResponse response = BIDSessions.pollSession(tenantInfo, "<sessionId>", true, true);
+```
+
+- FIDO2 Registration options
+```
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
+
+BIDAssertionOptionValue attestationOptionRequest = new BIDAssertionOptionValue();
+attestationOptionRequest.put("dns", "<dns>");
+attestationOptionRequest.put("username", "<username>");
+attestationOptionRequest.put("displayName", "<displayName>");
+attestationOptionRequest.put("attestation", "<attestation>");
+attestationOptionRequest.put("authenticatorSelection", "<authenticatorSelection>");
+
+BIDAttestationOptionsResponse attestationOptionsResponse = BIDWebAuthn.fetchAttestationOptions(tenantInfo, attestationOptionRequest);
+```
+
+- FIDO2 Registration result
+```
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
+
+BIDAttestationResultValue attestationResultRequest = new BIDAttestationResultValue();
+attestationResultRequest.put("rawId", "<rawId>");
+attestationResultRequest.put("response", "<response>");
+attestationResultRequest.put("authenticatorAttachment", "<authenticatorAttachment>");
+attestationResultRequest.put("getClientExtensionResults", "<getClientExtensionResults>");
+attestationResultRequest.put("id", "<id>");
+attestationResultRequest.put("type", "<type>");
+attestationResultRequest.put("dns", "<dns>");
+
+BIDAttestationResultData attestationResultResponse = BIDWebAuthn.submitAttestationResult(tenantInfo, attestationResultRequest);
+```
+
+- FIDO2 Authentication options
+```
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
+
+BIDAssertionOptionValue assertionOptionRequest = new BIDAssertionOptionValue();
+assertionOptionRequest.put("username", "<username>");
+assertionOptionRequest.put("username", "<displayName>");
+assertionOptionRequest.put("dns", "<dns>");
+
+BIDAssertionOptionResponse assertionOptionResponse = BIDWebAuthn.fetchAssertionOptions(tenantInfo, assertionOptionRequest);
+```
+
+- FIDO2 Authentication result
+```
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
+
+BIDAssertionResultValue assertionResultRequest = new BIDAssertionResultValue();
+assertionResultRequest.put("rawId", "<rawId>");
+assertionResultRequest.put("dns", "<dns>");
+assertionResultRequest.put("response", "<response>");
+assertionResultRequest.put("getClientExtensionResults", "<getClientExtensionResults>");
+assertionResultRequest.put("id", "<id>");
+assertionResultRequest.put("type", "<type>");
+
+BIDAssertionResultResponse assertionResultResponse = BIDWebAuthn.submitAssertionResult(tenantInfo, assertionResultRequest);
 ```

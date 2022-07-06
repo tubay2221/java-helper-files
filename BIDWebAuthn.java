@@ -242,10 +242,7 @@ public class BIDWebAuthn {
       Map<String, Object> body = new HashMap<>();
       body.put("rawId", assertionResultRequest.rawId);
       body.put("dns", assertionResultRequest.dns);
-      body.put("authenticatorData", assertionResultRequest.authenticatorData);
-      body.put("signature", assertionResultRequest.signature);
-      body.put("userHandle", assertionResultRequest.userHandle);
-      body.put("clientDataJSON", assertionResultRequest.clientDataJSON);
+      body.put("response", assertionResultRequest.response);
       body.put("getClientExtensionResults", assertionResultRequest.getClientExtensionResults);
       body.put("id", assertionResultRequest.id);
       body.put("type", assertionResultRequest.type);
