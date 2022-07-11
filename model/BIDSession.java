@@ -7,7 +7,14 @@
  */
 package com.bidsdk.model;
 
+import com.google.gson.Gson;
+
 public class BIDSession {
     public String sessionId;
     public String url;
+    
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
 }
