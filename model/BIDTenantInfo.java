@@ -20,8 +20,14 @@ public class BIDTenantInfo {
     public String name;
     public String tenantId;
     public String communityId;
+    
+    public BIDTenantInfo(String dns, String communityName, String licenseKey) {
+        this.dns = dns;
+        this.communityName = communityName;
+        this.licenseKey = licenseKey;
+    }
 
-    @Override
+	@Override
     public String toString() {
         return new Gson().toJson(this);
     }
