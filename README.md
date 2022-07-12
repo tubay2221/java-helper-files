@@ -53,3 +53,33 @@ BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<licen
 
 BIDSessionResponse response = BIDSessions.pollSession(tenantInfo, "<sessionId>", true, true);
 ```
+
+- FIDO2 Registration options
+```
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
+
+BIDAssertionOptionValue attestationOptionRequest = new BIDAssertionOptionValue();
+attestationOptionRequest.put("dns", "<dns>");
+attestationOptionRequest.put("username", "<username>");
+attestationOptionRequest.put("displayName", "<displayName>");
+attestationOptionRequest.put("attestation", "<attestation>");
+attestationOptionRequest.put("authenticatorSelection", "<authenticatorSelection>");
+
+BIDAttestationOptionsResponse attestationOptionsResponse = BIDWebAuthn.fetchAttestationOptions(tenantInfo, attestationOptionRequest);
+```
+
+- FIDO2 Registration result
+```
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
+
+BIDAttestationResultValue attestationResultRequest = new BIDAttestationResultValue();
+attestationResultRequest.put("rawId", "<rawId>");
+attestationResultRequest.put("response", "<response>");
+attestationResultRequest.put("authenticatorAttachment", "<authenticatorAttachment>");
+attestationResultRequest.put("getClientExtensionResults", "<getClientExtensionResults>");
+attestationResultRequest.put("id", "<id>");
+attestationResultRequest.put("type", "<type>");
+attestationResultRequest.put("dns", "<dns>");
+
+BIDAttestationResultData attestationResultResponse = BIDWebAuthn.submitAttestationResult(tenantInfo, attestationResultRequest);
+```
