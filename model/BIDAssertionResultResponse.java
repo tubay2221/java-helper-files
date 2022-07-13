@@ -21,4 +21,3 @@ public class BIDAssertionResultResponse {
         return new Gson().toJson(this);
     }
 }
-   
