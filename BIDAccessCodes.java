@@ -85,4 +85,99 @@ public class BIDAccessCodes {
         }
         return ret;
     }
+
+    public static BIDFetchAccessCodeResponse fetchAccessCode(BIDTenantInfo tenantInfo, String code) {
+   	BIDFetchAccessCodeResponse ret = null;
+       try {
+           BIDCommunityInfo communityInfo = BIDTenant.getInstance().getCommunityInfo(tenantInfo);
+           BIDKeyPair keySet = BIDTenant.getInstance().getKeySet();
+           String licenseKey = tenantInfo.licenseKey;
+           BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
+
+           String communityPublicKey = communityInfo.community.publicKey;
+
+           String sharedKey = BIDECDSA.createSharedKey(keySet.privateKey, communityPublicKey);
+
+           Map < String, String > headers = WTM.defaultHeaders();
+           headers.put("licensekey", BIDECDSA.encrypt(licenseKey, sharedKey));
+           headers.put("X-tenantTag", communityInfo.tenant.tenanttag);
+           headers.put("requestid", BIDECDSA.encrypt(new Gson().toJson(WTM.makeRequestId()), sharedKey));
+           headers.put("publickey", keySet.publicKey);
+
+           Map < String, Object > response = WTM.execute("get",
+           	sd.adminconsole + "/api/r1/acr/community/" + communityInfo.community.name + "/" + code,
+               headers,
+               null
+           );
+           
+           int statusCode = (Integer) response.get("status");  
+
+           String responseStr = (String) response.get("response");
+
+           ret = new Gson().fromJson(responseStr, BIDFetchAccessCodeResponse.class);
+           
+           if (ret.data != null) {
+               String dec_data = BIDECDSA.decrypt(ret.data, sharedKey);
+               System.out.println("dec_data:::::" + dec_data);
+               ret = new Gson().fromJson(dec_data, BIDFetchAccessCodeResponse.class);
+           }
+           
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+       return ret;
+   }
+
+   public static BIDRedeemEmailVerificationCodeResponse verifyAndRedeemEmailVerificationCode(BIDTenantInfo tenantInfo, String code) {
+    BIDRedeemEmailVerificationCodeResponse ret = null;
+    try {
+        BIDCommunityInfo communityInfo = BIDTenant.getInstance().getCommunityInfo(tenantInfo);
+        BIDKeyPair keySet = BIDTenant.getInstance().getKeySet();
+        String licenseKey = tenantInfo.licenseKey;
+        BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
+
+        String communityPublicKey = communityInfo.community.publicKey;
+
+        BIDFetchAccessCodeResponse access_code_response =  fetchAccessCode(tenantInfo, code);
+
+        if (access_code_response.statusCode !== 200) {
+            return access_code_response;
+        }
+
+        if (access_code_response.type != "verification_link") {
+            BIDRequestEmailVerificationLinkResponse errorData = new BIDRequestEmailVerificationLinkResponse();
+            	errorData.statusCode = 400;
+            	errorData.message = "Provided verification code is invalid type";
+                return errorData;
+        }
+
+        String sharedKey = BIDECDSA.createSharedKey(keySet.privateKey, communityPublicKey);
+
+        Map < String, String > headers = WTM.defaultHeaders();
+        headers.put("licensekey", BIDECDSA.encrypt(licenseKey, sharedKey));
+        headers.put("X-tenantTag", communityInfo.tenant.tenanttag);
+        headers.put("requestid", BIDECDSA.encrypt(new Gson().toJson(WTM.makeRequestId()), sharedKey));
+        headers.put("publickey", keySet.publicKey);
+
+        Map < String, Object > response = WTM.execute("post",
+            sd.adminconsole + "/api/r1/acr/community/" + communityInfo.community.name + "/" + code + "/redeem",
+            headers,
+            null
+        );
+        
+        int statusCode = (Integer) response.get("status");  
+
+        String responseStr = (String) response.get("response");
+
+        ret = new Gson().fromJson(responseStr, BIDRedeemEmailVerificationCodeResponse.class);
+        
+        if (statusCode === 200) {
+            ret.status = "redeemed";
+        }
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return ret;
+}
 }
