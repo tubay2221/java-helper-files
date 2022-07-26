@@ -7,7 +7,6 @@
  */
 package com.bidsdk;
 
-import com.bidsdk.BIDTenant;
 import com.bidsdk.model.BIDAttestationOptionsResponse;
 import com.bidsdk.model.BIDAttestationOptionsValue;
 import com.bidsdk.model.BIDAttestationResultData;
@@ -29,43 +28,8 @@ import java.util.Map;
 
 public class BIDWebAuthn {
 
-  private static String getPublicKey(BIDTenantInfo tenantInfo) {
-    String ret = null;
-    try {
-      BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
-      String url = sd.webauthn + "/publickeys";
-
-      String cache_key = url;
-      String cache_str = InMemCache.getInstance().get(cache_key);
-      if (cache_str != null) {
-        Map<String, String> map = new Gson().fromJson(cache_str, Map.class);
-        ret = map.get("publicKey");
-        return ret;
-      }
-
-      //load from services
-      Map<String, Object> response = WTM.execute("get",
-        url,
-        WTM.defaultHeaders(),
-        null
-      );
-      String responseStr = (String) response.get("response");
-
-      int statusCode = (Integer) response.get("status");
-      if (statusCode == 200) {
-        Map<String, String> map = new Gson().fromJson(responseStr, Map.class);
-        ret = map.get("publicKey");
-        InMemCache.getInstance().set(cache_key, responseStr);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    return ret;
-  }
-
   public static BIDAttestationOptionsResponse fetchAttestationOptions(
-    BIDTenantInfo tenantInfo, BIDAttestationOptionsValue attestationOptionsRequest
+    BIDTenantInfo tenantInfo,BIDAttestationOptionsValue attestationOptionsRequest
   ) {
     BIDAttestationOptionsResponse ret = null;
     try {
@@ -73,17 +37,10 @@ public class BIDWebAuthn {
       BIDKeyPair keySet = BIDTenant.getInstance().getKeySet();
       String licenseKey = tenantInfo.licenseKey;
       BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
-      String webAuthnPublicKey = getPublicKey(tenantInfo);
-
-
-      String sharedKey = BIDECDSA.createSharedKey(
-        keySet.privateKey,
-        webAuthnPublicKey
-      );
 
       Map<String, String> headers = WTM.defaultHeaders();
-      headers.put("licensekey", BIDECDSA.encrypt(licenseKey, sharedKey));
-      headers.put("requestid", BIDECDSA.encrypt(new Gson().toJson(WTM.makeRequestId()), sharedKey));
+      headers.put("licensekey", licenseKey);
+      headers.put("requestid", new Gson().toJson(WTM.makeRequestId()));
       headers.put("publickey", keySet.publicKey);
 
       Map<String, Object> body = new HashMap<>();
@@ -95,25 +52,16 @@ public class BIDWebAuthn {
       body.put("communityId", communityInfo.community.id);
       body.put("tenantId", communityInfo.tenant.id);
 
-      String enc_data = BIDECDSA.encrypt(new Gson().toJson(body), sharedKey);
-
-      Map<String, Object> data = new HashMap<>();
-      data.put("data", enc_data);
-
       Map<String, Object> response = WTM.execute("post",
-        sd.webauthn + "/attestation/options",
+        sd.webauthn + "/u1/attestation/options",
         headers,
-        new Gson().toJson(data)
+        new Gson().toJson(body)
       );
 
       String responseStr = (String) response.get("response");
 
       ret = new Gson().fromJson(responseStr, BIDAttestationOptionsResponse.class);
 
-      if (ret.data != null) {
-        String dec_data = BIDECDSA.decrypt(ret.data, sharedKey);
-        ret = new Gson().fromJson(dec_data, BIDAttestationOptionsResponse.class);
-      }
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -128,13 +76,9 @@ public class BIDWebAuthn {
       String licenseKey = tenantInfo.licenseKey;
       BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
 
-      String webAuthnPublicKey = getPublicKey(tenantInfo);
-
-      String sharedKey = BIDECDSA.createSharedKey(keySet.privateKey, webAuthnPublicKey);
-
       Map<String, String> headers = WTM.defaultHeaders();
-      headers.put("licensekey", BIDECDSA.encrypt(licenseKey, sharedKey));
-      headers.put("requestid", BIDECDSA.encrypt(new Gson().toJson(WTM.makeRequestId()), sharedKey));
+      headers.put("licensekey", licenseKey);
+      headers.put("requestid", new Gson().toJson(WTM.makeRequestId()));
       headers.put("publickey", keySet.publicKey);
 
       Map<String, Object> body = new HashMap<>();
@@ -148,25 +92,16 @@ public class BIDWebAuthn {
       body.put("communityId", communityInfo.community.id);
       body.put("tenantId", communityInfo.tenant.id);
 
-      String enc_data = BIDECDSA.encrypt(new Gson().toJson(body), sharedKey);
-
-      Map<String, Object> data = new HashMap<>();
-      data.put("data", enc_data);
-
       Map<String, Object> response = WTM.execute("post",
-        sd.webauthn + "/attestation/result",
+        sd.webauthn + "/u1/attestation/result",
         headers,
-        new Gson().toJson(data)
+        new Gson().toJson(body)
       );
 
       String responseStr = (String) response.get("response");
 
       ret = new Gson().fromJson(responseStr, BIDAttestationResultData.class);
       
-      if (ret.data != null) {
-        String dec_data = BIDECDSA.decrypt(ret.data, sharedKey);
-        ret = new Gson().fromJson(dec_data, BIDAttestationResultData.class);
-      }
     } catch (Exception e) {
       e.printStackTrace();
     }
