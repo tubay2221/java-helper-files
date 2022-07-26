@@ -20,7 +20,7 @@ public class BIDAttestationOptionsResponse {
     public int timeout;
     public BIDAuthenticatorSelectionValue authenticatorSelection;
     public String challenge;
-    public Map<String, Object> excludeCredentials;
+    public List<BIDExcludeCredentials> excludeCredentials;
     public String status;
     public String errorMessage;
     public String data;
