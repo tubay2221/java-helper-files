@@ -123,7 +123,7 @@ public class BIDWebAuthn {
 
       Map<String, Object> body = new HashMap<>();
       body.put("username", assertionOptionRequest.username);
-      body.put("username", assertionOptionRequest.displayName);
+      body.put("displayName", assertionOptionRequest.displayName);
       body.put("dns", assertionOptionRequest.dns);
       body.put("communityId", communityInfo.community.id);
       body.put("tenantId", communityInfo.tenant.id);
@@ -144,7 +144,7 @@ public class BIDWebAuthn {
     return ret;
   }
 
-public static BIDAssertionResultResponse submitAssertionResult(BIDTenantInfo tenantInfo, BIDAssertionResultValue assertionResultRequest) {
+  public static BIDAssertionResultResponse submitAssertionResult(BIDTenantInfo tenantInfo, BIDAssertionResultValue assertionResultRequest) {
     BIDAssertionResultResponse ret = null;
     try {
       BIDCommunityInfo communityInfo = BIDTenant.getInstance().getCommunityInfo(tenantInfo);
