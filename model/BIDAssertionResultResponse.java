@@ -7,24 +7,15 @@
  */
 package com.bidsdk.model;
 
-import java.util.Map;
-import java.util.List;
-
 import com.google.gson.Gson;
 
-public class BIDAttestationOptionsResponse {
-    public BIDRelyingPartyValue rp;
-    public BIDAttestationUserData user;
-    public String attestation;
-    public List<BIDPubKeyCredParam> pubKeyCredParams;
-    public int timeout;
-    public BIDAuthenticatorSelectionValue authenticatorSelection;
-    public String challenge;
-    public Map<String, Object> excludeCredentials;
+public class BIDAssertionResultResponse {
+    
+    public String sub;
     public String status;
     public String errorMessage;
     public String data;
-    
+
     @Override
     public String toString() {
         return new Gson().toJson(this);

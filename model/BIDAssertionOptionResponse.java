@@ -7,20 +7,16 @@
  */
 package com.bidsdk.model;
 
-import java.util.Map;
 import java.util.List;
 
 import com.google.gson.Gson;
 
-public class BIDAttestationOptionsResponse {
-    public BIDRelyingPartyValue rp;
-    public BIDAttestationUserData user;
-    public String attestation;
-    public List<BIDPubKeyCredParam> pubKeyCredParams;
-    public int timeout;
-    public BIDAuthenticatorSelectionValue authenticatorSelection;
+public class BIDAssertionOptionResponse {
     public String challenge;
-    public Map<String, Object> excludeCredentials;
+    public String rpId;
+    public int timeout;
+    public String UserVerification;
+    public List<BIDAllowCredentials> allowCredentials;
     public String status;
     public String errorMessage;
     public String data;
