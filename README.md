@@ -84,6 +84,33 @@ attestationResultRequest.put("dns", "<dns>");
 BIDAttestationResultData attestationResultResponse = BIDWebAuthn.submitAttestationResult(tenantInfo, attestationResultRequest);
 ```
 
+- FIDO2 Authentication options
+```
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
+
+BIDAssertionOptionValue assertionOptionRequest = new BIDAssertionOptionValue();
+assertionOptionRequest.put("username", "<username>");
+assertionOptionRequest.put("username", "<displayName>");
+assertionOptionRequest.put("dns", "<dns>");
+
+BIDAssertionOptionResponse assertionOptionResponse = BIDWebAuthn.fetchAssertionOptions(tenantInfo, assertionOptionRequest);
+```
+
+- FIDO2 Authentication result
+```
+BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
+
+BIDAssertionResultValue assertionResultRequest = new BIDAssertionResultValue();
+assertionResultRequest.put("rawId", "<rawId>");
+assertionResultRequest.put("dns", "<dns>");
+assertionResultRequest.put("response", "<response>");
+assertionResultRequest.put("getClientExtensionResults", "<getClientExtensionResults>");
+assertionResultRequest.put("id", "<id>");
+assertionResultRequest.put("type", "<type>");
+
+BIDAssertionResultResponse assertionResultResponse = BIDWebAuthn.submitAssertionResult(tenantInfo, assertionResultRequest);
+
+```
 - Create new Driver's License verification session
 ```
 BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
@@ -110,4 +137,3 @@ BIDPollSessionResponse pollSessionResponse = BIDVerifyDocument.pollSessionResult
 BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDRequestEmailVerificationLinkResponse requestEmailVerificationResponse = BIDAccessCodes.requestEmailVerificationLink(tenantInfo, "<emailTo>", "<emailTemplateB64OrNull>", "<emailSubjectOrNull>", "<ttl_seconds_or_null>");
-```
