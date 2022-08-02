@@ -136,9 +136,11 @@ BIDPollSessionResponse pollSessionResponse = BIDVerifyDocument.pollSessionResult
 BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDRequestEmailVerificationLinkResponse requestEmailVerificationResponse = BIDAccessCodes.requestEmailVerificationLink(tenantInfo, "<emailTo>", "<emailTemplateB64OrNull>", "<emailSubjectOrNull>", "<ttl_seconds_or_null>");
+```
 
 - Verify and Redeem Email verification link
 ```
 BIDTenantInfo tenantInfo = new BIDTenantInfo("<dns>", "<communityName>", "<license>");
 
 BIDAccessCodeResponse redeemVerificationCodeResponse = BIDAccessCodes.verifyAndRedeemEmailVerificationCode(tenantInfo, "<code>");
+```
