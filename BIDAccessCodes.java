@@ -12,6 +12,8 @@ import com.bidsdk.model.BIDKeyPair;
 import com.bidsdk.model.BIDSD;
 import com.bidsdk.model.BIDTenantInfo;
 import com.bidsdk.model.BIDRequestEmailVerificationLinkResponse;
+import com.bidsdk.model.BIDAccessCodeResponse;
+import com.bidsdk.model.BIDRedeemEmailVerificationCodeResponse;
 import com.bidsdk.utils.WTM;
 import com.google.gson.Gson;
 import java.util.HashMap;
@@ -80,6 +82,103 @@ public class BIDAccessCodes {
             
             ret.statusCode = statusCode;
             
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    private static BIDAccessCodeResponse fetchAccessCode(BIDTenantInfo tenantInfo, String code) {
+        BIDAccessCodeResponse ret = null;
+        try {
+            BIDCommunityInfo communityInfo = BIDTenant.getInstance().getCommunityInfo(tenantInfo);
+            BIDKeyPair keySet = BIDTenant.getInstance().getKeySet();
+            String licenseKey = tenantInfo.licenseKey;
+            BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
+
+            String communityPublicKey = communityInfo.community.publicKey;
+
+            String sharedKey = BIDECDSA.createSharedKey(keySet.privateKey, communityPublicKey);
+
+            Map < String, String > headers = WTM.defaultHeaders();
+            headers.put("licensekey", BIDECDSA.encrypt(licenseKey, sharedKey));
+            headers.put("X-tenantTag", communityInfo.tenant.tenanttag);
+            headers.put("requestid", BIDECDSA.encrypt(new Gson().toJson(WTM.makeRequestId()), sharedKey));
+            headers.put("publickey", keySet.publicKey);
+
+            Map < String, Object > response = WTM.execute("get",
+                sd.adminconsole + "/api/r1/acr/community/" + communityInfo.community.name + "/" + code,
+                headers,
+                null
+            );
+
+            int statusCode = (Integer) response.get("status");
+
+            String responseStr = (String) response.get("response");
+
+            ret = new Gson().fromJson(responseStr, BIDAccessCodeResponse.class);
+
+            if (ret.data != null) {
+                String dec_data = BIDECDSA.decrypt(ret.data, sharedKey);
+                ret = new Gson().fromJson(dec_data, BIDAccessCodeResponse.class);
+            }
+
+            ret.statusCode = statusCode;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    public static BIDAccessCodeResponse verifyAndRedeemEmailVerificationCode(BIDTenantInfo tenantInfo, String code) {
+        BIDAccessCodeResponse ret = null;
+        try {
+            BIDCommunityInfo communityInfo = BIDTenant.getInstance().getCommunityInfo(tenantInfo);
+            BIDKeyPair keySet = BIDTenant.getInstance().getKeySet();
+            String licenseKey = tenantInfo.licenseKey;
+            BIDSD sd = BIDTenant.getInstance().getSD(tenantInfo);
+
+            String communityPublicKey = communityInfo.community.publicKey;
+
+            ret = fetchAccessCode(tenantInfo, code);
+
+            if (ret.statusCode != 200) {
+                return ret;
+            }
+
+            if (!ret.type.equals("verification_link")) {
+                ret.statusCode = 400;
+                ret.message = "Provided verification code is invalid type";
+                return ret;
+            }
+
+            String sharedKey = BIDECDSA.createSharedKey(keySet.privateKey, communityPublicKey);
+
+            Map < String, String > headers = WTM.defaultHeaders();
+            headers.put("licensekey", BIDECDSA.encrypt(licenseKey, sharedKey));
+            headers.put("X-tenantTag", communityInfo.tenant.tenanttag);
+            headers.put("requestid", BIDECDSA.encrypt(new Gson().toJson(WTM.makeRequestId()), sharedKey));
+            headers.put("publickey", keySet.publicKey);
+
+            String body = new String("{}");
+
+            Map < String, Object > response = WTM.execute("post",
+                sd.adminconsole + "/api/r1/acr/community/" + communityInfo.community.name + "/" + code + "/redeem",
+                headers,
+                body
+            );
+
+            int statusCode = (Integer) response.get("status");
+
+            String responseStr = (String) response.get("response");
+            BIDRedeemEmailVerificationCodeResponse redemCodeResponse = new Gson().fromJson(responseStr, BIDRedeemEmailVerificationCodeResponse.class);
+
+            if (statusCode == 200) {
+                ret.message = redemCodeResponse.message;
+                ret.status = "redeemed";
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
